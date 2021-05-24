@@ -37,10 +37,14 @@ def get_check_digit(initpart):
         check_digit=0
     return str(check_digit)
 
+# print(get_check_digit("978780083741"))
+
 def isbn10to13(isbn10):
     isbn12="978"+isbn10[:-1]
     check_digit=get_check_digit(isbn12)
     return isbn12+check_digit
+
+print(isbn10to13("7540729295"))
 
 def get_pack(ucdrs_url):
     # new_name = (title, isbn)
@@ -65,6 +69,7 @@ def get_pack(ucdrs_url):
     title=title[0]
     title=re.sub("\s+","-",title)
     title=re.sub("/","",title)
+    title=re.sub("\?","",title)
 
     isbn=html.xpath(isbn_patt)[0].replace("-","")
 
@@ -93,8 +98,10 @@ def get_pack(ucdrs_url):
 def get_ss_from_filename(filename):
     ss=re.findall("1\d{7}",filename)
     if ss:
+        print(f"ss:{ss}")
         return ss[0]
     else:
+        print("ss:{}")
         return None
 
 def main():
@@ -108,8 +115,11 @@ def main():
     for book in os.listdir(book_dir):
         if book.endswith(".pdf"):
             ss=get_ss_from_filename(book)
+            print(ss)
+            print(ss_newnames)
             if ss in ss_newnames.keys() and ss!=None:
                 newname=ss_newnames[ss]
+                print("newname:",newname)
                 if not os.getcwd()==book_dir:
                     os.chdir(book_dir)
                 shutil.move(book,newname+".pdf")
